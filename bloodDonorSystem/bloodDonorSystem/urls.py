@@ -23,4 +23,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("user/", include("users.urls")),
     path("", views.home_view, name="home"),
-    ]
+    path("get-started/", views.get_started, name='get-started')
+]

@@ -32,7 +32,14 @@
         </div>
         {% block navbar %}
         <ul class="flex items-center gap-6">
-
+            <li>
+                <a href="{% url 'get-started' %}">
+                    <button
+                        class="bg-blue-500 hover:bg-blue-600 transition-all p-2 flex items-center gap-2 px-3 text-sm rounded py-1.5 font-medium text-white">Get
+                        started <i data-lucide="arrow-right" class="size-3.5" stroke-width="3"></i>
+                    </button>
+                </a>
+            </li>
         </ul>
         {% endblock %}
     </nav>
