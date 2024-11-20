@@ -110,3 +110,6 @@ class RequestsTable(tables.Table):
             return format_html("<p class='flex items-center gap-2'> <i data-lucide='x' class='size-4' stroke-width='2'></i> Rejected</p>")
         elif record.approval_status == 'pending':
             return format_html("<p class='flex items-center gap-2'> <i data-lucide='hourglass' class='size-4' stroke-width='2'></i> Pending</p>")
+
+    def render_request_amount(self,record):
+        return f"{record.request_amount} Ml"

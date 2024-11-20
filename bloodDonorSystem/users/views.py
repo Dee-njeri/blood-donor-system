@@ -157,6 +157,9 @@ def profile_settings_view(request):
 def dashboard_view(request):
     user = request.user
 
+    if not user.profile_completed:
+        return redirect("complete-profile")
+
     if user.is_superuser:
         return redirect('admin:index')  # Redirect to the admin index page
 

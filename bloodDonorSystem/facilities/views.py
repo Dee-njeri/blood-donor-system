@@ -98,6 +98,12 @@ def awaiting_approval(request):
 
 @login_required
 def complete_profile(request):
+
+    user = request.user
+
+    if not user.is_approved:
+        return redirect('awaiting-approval')
+
     try:
         facility_profile = FacilityProfile.objects.get(user=request.user)
     except FacilityProfile.DoesNotExist:

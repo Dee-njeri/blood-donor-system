@@ -300,10 +300,10 @@ class DonorsTable(tables.Table):
 
     def render_requests(self, record):
         return format_html(
-            '<p><span class="text-purple-600 text-lg">{}</span> - '
-            '<span class="text-green-600 text-lg">{}</span> - '
-            '<span class="text-red-600 text-lg">{}</span> - '
-            '<span class="text-black text-lg">{}</span></p>',
+            '<p><span style="color: rgba(175, 82, 222, 1); ">{}</span> - '
+            '<span style="color: rgba(52, 211, 153, 1); ">{}</span> - '
+            '<span style="color: rgba(220, 38, 38, 1); ">{}</span> - '
+            '<span style="color: rgba(0, 0, 0, 1); ">{}</span></p>',
             record['pending_requests'],
             record['approved_requests'],
             record['rejected_requests'],

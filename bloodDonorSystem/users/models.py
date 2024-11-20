@@ -61,7 +61,6 @@ class UserProfile(models.Model):
         super().save(*args, **kwargs)
 
 
-
 class DonationEligibity(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     last_donation_date = models.DateField(null=True, blank=True)
