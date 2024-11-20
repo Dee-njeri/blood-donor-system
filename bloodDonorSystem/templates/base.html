@@ -32,6 +32,12 @@
         </div>
         {% block navbar %}
         <ul class="flex items-center gap-6">
+
+            <li>
+                <a href="{% url 'login' %}">
+                    <button class="text-sm font-medium hover;text-neutral-700 hover:text-black">Sign in</button>
+                </a>
+            </li>
             <li>
                 <a href="{% url 'get-started' %}">
                     <button

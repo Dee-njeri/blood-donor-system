@@ -1,0 +1,308 @@
+{% extends "user/dashboard-layout.html" %}
+
+{% load render_table from django_tables2 %}
+
+{% block title %} Blood Donor System | Requests{% endblock %}
+
+
+{% block content %}
+<div class="w-full p-4 flex flex-col gap-4">
+    {% comment %} metric cards {% endcomment %}
+    <div class="w-full grid grid-cols-3 gap-4">
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Requests made</p>
+                <p class="text-3xl font-semibold tracking-tight">{{ total_requests }}</p>
+            </div>
+        </div>
+
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Requests approved</p>
+                <p class="text-3xl font-semibold tracking-tight">{{ approved_requests_count }}</p>
+            </div>
+        </div>
+
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Requests rejected</p>
+                <p class="text-3xl font-semibold tracking-tight">{{ rejected_requests_count }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-2 ">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <h1 class="font-semibold">Requests</h1>
+                <div class="flex items-center text-sm gap-2 max-w-5xl overflow-x-auto custom-scrollbar-sm">
+                    {% if requests_filter.form %}
+                        {% for field in requests_filter.form %}
+                            {% if field.value %}
+                                {% if field.name == 'facility' %}
+                                        <div class='border min-w-fit border-dotted flex items-center border-neutral-300 gap-3 px-3 py-0.5 rounded text-neutral-700'><span class='text-black font-medium'>{{ field.label }}</span> <small class='!text-[8px] font-semibold text-neutral-500'>|</small> {{ selected_facility_name }} </div>
+                                {% else %}
+                                        <div class='border min-w-fit border-dotted flex items-center border-neutral-300 gap-3 px-3 py-0.5 rounded text-neutral-700'><span class='text-black font-medium'>{{ field.label }}</span> <small class='!text-[8px] font-semibold text-neutral-500'>|</small> {{ field.value }}  </div>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <button id="filter-btn"
+                    class="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-600 text-white font-medium text-sm rounded">
+                    Add filter <i data-lucide="list-filter" class="size-4" stroke-width="3"></i>
+                </button>
+            </div>
+        </div>
+        <div class="w-full">
+            {% render_table requests_table %}
+        </div>
+    </div>
+
+    <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
+        <h1 class="font-semibold">Request Blood</h1>
+        <div class="w-full">
+            <table class="w-full max-h-80">
+                <thead class="border-b">
+                    <tr class=" ">
+                        <th class="text-start p-2 font-semibold">Facility</th>
+                        <th class="text-start p-2 font-semibold">Type</th>
+                        <th class="text-start p-2 font-semibold">Location</th>
+                        <th class="text-start p-2 font-semibold">Contact</th>
+                        <th class="text-start p-2 font-semibold">Open Days</th>
+                        <th class="text-start p-2 font-semibold">Working Hrs</th>
+                        <th class="text-start p-2 font-semibold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for facility in facilities %}
+                    <tr class="{% if forloop.counter|divisibleby:2 %}bg-[#eeeeee] {% else %}bg-white{% endif %}">
+                        <td class="p-2 truncate text-neutral-800">{{ facility.name }}</td>
+                        <td class="p-2 truncate text-neutral-800 capitalize">{{ facility.facility_type}}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ facility.county}}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ facility.contact_number}}</td>
+                        <td class="p-2 truncate text-neutral-800 capitalize">{{ facility.open_days }}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ facility.opening_time|date:"g:i a" }} -
+                            {{facility.closing_time|date:"g:i a" }}</td>
+                        <td>
+                            {% if facility.total_blood is not None and facility.total_blood > 800 %}
+                            <a href="{% url 'make-request' facility.id %}">
+                                <button
+                                    class="px-3 w-full text-white py-1  font-medium text-sm  rounded {% if facility.total_blood is not None and facility.total_blood > 800 %} bg-green-500 {% else %} bg-neutral-400 disabled cursor-not-allowed{% endif %}">
+
+                                    Request
+                                </button>
+                            </a>
+                            {% else %}
+                            <button
+                                class="px-3 w-full text-white py-1 font-medium text-sm rounded bg-neutral-300 disabled cursor-not-allowed">
+                                Not available
+                            </button>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td class="p-2 truncate text-neutral-800 font-medium">
+                            No facilities available at the moment
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    {% comment %} filters modal {% endcomment %}
+
+    <div id="filter-modal" class="fixed hidden h-screen w-full top-0 left-0 z-20">
+        <div id="filter-backdrop"
+            class="absolute top-0 left-0 w-full bg-black/40 h-full opacity-0 transition-opacity duration-200"></div>
+        <div id="filter-sheet"
+            class="absolute right-0 top-0 h-screen w-[500px]  z-20 p-4 transform translate-x-full transition-transform duration-300">
+            <div class="w-full h-full bg-white shadow rounded-md relative">
+                <button id="close-sheet-btn"
+                    class="size-4 rounded-full grid place-items-center hover:bg-neutral-100 absolute top-3 right-4">
+                    <i data-lucide="x" class="size-5" stroke-width="2"></i>
+                </button>
+                <div class="pt-4">
+                    <h1 class="font-semibold tracking-tight px-6 text-xl">Add filters</h1>
+                    <form method="get" class="flex flex-col p-6 pb-3 gap-4">
+                        <div class="form-group">
+                            {{ requests_filter.form.facility.label_tag }}
+                            {{ requests_filter.form.facility }}
+                        </div>
+                        <div class="form-group">
+                            {{ requests_filter.form.request_type.label_tag }}
+                            {{ requests_filter.form.request_type }}
+                        </div>
+                        <div class="form-group">
+                            {{ requests_filter.form.request_status.label_tag }}
+                            {{ requests_filter.form.request_status }}
+                        </div>
+                        <div class="form-group">
+                            {{ requests_filter.form.urgency_level.label_tag }}
+                            {{ requests_filter.form.urgency_level }}
+                        </div>
+                        <div class="form-group">
+                            {{ requests_filter.form.approval_status.label_tag }}
+                            {{ requests_filter.form.approval_status }}
+                        </div>
+                        <div class="form-group">
+                            {{ requests_filter.form.start_date.label_tag }}
+                            {{ requests_filter.form.start_date }}
+                        </div>
+                        <div class="form-group">
+                            {{ requests_filter.form.end_date.label_tag }}
+                            {{ requests_filter.form.end_date }}
+                        </div>
+                        <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-600 h-9 font-medium px-3 rounded text-white flex items-center justify-center gap-2">
+                            Add filters <i data-lucide="plus" class="size-4"></i>
+                        </button>
+                    </form>
+                    <form action="" method="get" class="flex items-center gap-2 px-6">
+                        <button type="submit" name="clear_donations_filters" value="true" class="bg-red-500 hover:bg-red-600 text-white font-medium py-1 px-3 rounded w-2/4 justify-center flex items-center gap-2">
+                            Clear Filters
+                            <i data-lucide='trash' class='size-4'></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block make-request %}
+    {% endblock %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        function closeModalOnBackdropClick(modalId) {
+            const modal = document.getElementById(modalId);
+            const backdrop = modal.querySelector('.backdrop');
+
+            backdrop.addEventListener('click', function () {
+                modal.classList.add('hidden');
+            });
+        }
+
+        const details_modals = document.querySelectorAll('[id^="detailsModal"]');
+        details_modals.forEach(modal => {
+            closeModalOnBackdropClick(modal.id);
+        });
+
+        const deleteModals = document.querySelectorAll('[id^="deleteModal"]');
+        deleteModals.forEach(modal => {
+            closeModalOnBackdropClick(modal.id);
+        });
+
+        const cancelModals = document.querySelectorAll('[id^="cancelModal"]');
+        cancelModals.forEach(modal => {
+            closeModalOnBackdropClick(modal.id);
+        });
+
+
+
+        const more_details_buttons = document.querySelectorAll(".more-details-btn")
+        more_details_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                console.log(button.dataset.id)
+                e.preventDefault()
+                const modal = document.querySelector(`#detailsModal${button.dataset.id}`)
+                modal.classList.remove("hidden")
+            })
+        })
+
+
+        const delete_buttons = document.querySelectorAll(".delete-btn")
+        delete_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                console.log(button.dataset.id)
+                e.preventDefault()
+                const modal = document.querySelector(`#deleteModal${button.dataset.id}`)
+                modal.classList.remove("hidden")
+            })
+        })
+
+        const cancel_buttons = document.querySelectorAll(".cancel-btn")
+        cancel_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                console.log(button.dataset.id)
+                e.preventDefault()
+                const modal = document.querySelector(`#cancelModal${button.dataset.id}`)
+                modal.classList.remove("hidden")
+            })
+        })
+
+        const action_buttons = document.querySelectorAll(".actions-btn")
+
+        action_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault()
+                const menu = document.querySelector(`#actionsMenu${button.dataset.id}`)
+                const backdrop = document.querySelector(`#actionsMenuBackdrop${button.dataset.id}`)
+                menu.classList.remove("hidden")
+                backdrop.classList.remove("hidden")
+            })
+        })
+
+        const backdrops = document.querySelectorAll(".backdrop")
+
+        backdrops.forEach((backdrop) => {
+            backdrop.addEventListener("click", (e) => {
+                console.log("clicked")
+                e.preventDefault()
+                const menu = document.querySelector(`#actionsMenu${backdrop.dataset.id}`)
+                menu.classList.add("hidden")
+                backdrop.classList.add("hidden")
+            })
+        })
+
+                // add filter sheet
+        const filter_modal = document.getElementById("filter-modal")
+        const filter_sheet = document.getElementById("filter-sheet")
+        const filter_button = document.getElementById('filter-btn')
+        const close_sheet_btn = document.getElementById("close-sheet-btn")
+        const filter_backdrop = document.getElementById("filter-backdrop")
+
+        const openFilterSheet = () => {
+            console.log('clicked')
+            filter_modal.classList.remove("hidden")
+            setTimeout(() => {
+                filter_sheet.classList.remove("translate-x-full")
+                filter_backdrop.classList.replace("opacity-0", "opacity-100")
+            }, 10);
+        }
+
+        const closeSheet = () => {
+            filter_sheet.classList.add("translate-x-full")
+            filter_backdrop.classList.replace("opacity-100", "opacity-0")
+
+            setTimeout(() => {
+                filter_modal.classList.add("hidden")
+            }, 300)
+        }
+
+        filter_button.addEventListener("click", openFilterSheet)
+        close_sheet_btn.addEventListener("click", closeSheet)
+        filter_backdrop.addEventListener('click', closeSheet)
+
+        
+
+        
+
+
+    })
+
+</script>
+{% endblock %}

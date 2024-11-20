@@ -1,0 +1,128 @@
+{% extends "user/dashboard-layout.html" %}
+
+{% block title %} Blood Donor System | User Dashboard{% endblock %}
+
+
+
+{% block content %}
+<div class="w-full p-4 flex flex-col gap-4">
+
+    <div class="w-full grid grid-cols-4 gap-4">
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Total Donations</p>
+                <p class="text-5xl font-semibold tracking-tight">{{ total_donations }}</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Total requests</p>
+                <p class="text-5xl font-semibold tracking-tight">{{ total_requests }}</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Pending requests</p>
+                <p class="text-5xl font-semibold tracking-tight">{{ pending_requests_count }}</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Rejected requests</p>
+                <p class="text-5xl font-semibold tracking-tight">{{ rejected_requests_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="w-full grid grid-cols-3 gap-4">
+        <div class="w-full col-span-1 relative h-96 rounded-md shadow p-6 border flex flex-col gap-4 ">
+            <h1 class="font-semibold">My details</h1>
+            <div class="flex flex-col gap-6 relative">
+
+                <div class="flex flex-col gap-2 ">
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Full name</p>
+                        <p class="font-medium">{{ profile.firstname }} {{ profile.lastname }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Email</p>
+                        <p class="font-medium">{{ user.email }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Gender</p>
+                        <p class="font-medium">{{ profile.gender }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Phone</p>
+                        <p class="font-medium">{{ profile.phone }}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="flex flex-col gap-2 ">
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">County</p>
+                        <p class="font-medium">{{ profile.county }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Date of Birth</p>
+                        <p class="font-medium">{{ profile.date_of_birth }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Blood group</p>
+                        <p class="font-medium">{{ profile.blood_group }}</p>
+                    </div>
+                </div>
+
+
+            </div>
+            <p class="text-sm absolute bottom-6 left-6">Joined on {{ user.date_joined }}</p>
+        </div>
+
+        <div class="w-full col-span-2 h-96 rounded-md shadow p-6 border flex flex-col gap-4 ">
+            <div class="flex w-full  items-center justify-between">
+
+                <h1 class="font-semibold">Upcoming Donation Appointments</h1>
+                <a href="{% url 'donations' %}" class="text-blue-500  font-medium flex items-center gap-1 text-sm">View all donations<i data-lucide="arrow-up-right" class="size-4" stroke-width="2"></i></a>
+            </div>
+            <div class="w-full">
+                <table class="w-full max-h-80">
+                    <thead class="">
+                        <tr class=" ">
+                            <th class="text-start p-2 font-semibold">Facility</th>
+                            <th class="text-start p-2 font-semibold">Location</th>
+                            <th class="text-start p-2 font-semibold">Donation Type</th>
+                            <th class="text-start p-2 font-semibold">Approval Status</th>
+
+                            <th class="text-start p-2 font-semibold">Date/Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for donation in upcoming_donations %}
+
+                        <tr class="bg-neutral-100">
+                            <td class="p-2 truncate text-neutral-800">{{donation.facility.name}}</td>
+                            <td class="p-2 truncate text-neutral-800">{{donation.facility.county}}</td>
+                            <td class="p-2 truncate text-neutral-800 capitalize">{{ donation.donation_type }}</td>
+                            <td class="p-2 truncate text-neutral-800 capitalize">{{ donation.approval_status }}</td>
+                            <td class="p-2 truncate text-neutral-800">{{ donation.donation_date|date:'d-m-Y, g:i a' }}</td>
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td class="p-2 truncate text-neutral-800">
+                                No upcoming donation appointments
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

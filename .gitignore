@@ -2,6 +2,7 @@ venv/
 
 /bloodDonorSystem/node_modules
 /bloodDonorSystem/db.sqlite3
+/bloodDonorSystem/venv
 
 # Ignore Python bytecode files
 __pycache__/

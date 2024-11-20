@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %} Blood Donor System | Awaiting Approval{% endblock %}
+
+
+{% block navbar%}
+<form action="{% url 'logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit"
+        class="bg-red-500 hover:bg-red-600 transition-all p-2 flex items-center gap-2 px-3 text-sm rounded py-1.5 font-medium text-white">Sign
+        out
+        <i data-lucide="log-out" class="size-3.5" stroke-width="3"></i>
+    </button>
+</form>
+{% endblock %}
+
+
+{% block content %}
+<div class="w-full max-w-7xl mx-auto pt-32">
+    <div class="max-w-lg mx-auto flex flex-col gap-6 items-start">
+
+        <div class="flex flex-col gap-6">
+            <h1 class="text-4xl font-bold tracking-tight text-neutral-800">Awaiting Approval</h1>
+            <p class=" text-neutral-600 text-lg leading-relaxed   mb-6">
+                Your registration is currently being reviewd and an email of approval will be sent to <b> {{email}} </b>in the
+                next 72 hours
+
+            </p>
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}

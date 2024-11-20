@@ -22,6 +22,11 @@ from users import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("user/", include("users.urls")),
+    path("facility/", include("facilities.urls")),
+    path("get-started/", views.get_started, name='get-started'),
     path("", views.home_view, name="home"),
-    path("get-started/", views.get_started, name='get-started')
+    path("login/", views.login_user, name='login'),
+    path("logout/", views.logout_view, name='logout'),
+    path("__reload__/", include("django_browser_reload.urls")),
 ]
+
