@@ -61,6 +61,7 @@ class UserProfile(models.Model):
         super().save(*args, **kwargs)
 
 
+
 class DonationEligibity(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     last_donation_date = models.DateField(null=True, blank=True)
@@ -188,12 +189,14 @@ class Request(models.Model):
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     ]
+
     request_id = models.CharField(max_length=50, unique=True, null=True)
 
     user = models.ForeignKey(
-        UserProfile, on_delete=models.CASCADE, related_name='requests')
+        UserProfile, on_delete=models.CASCADE,  related_name='requests')
     facility = models.ForeignKey(
         FacilityProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='requests')
+    
 
     request_type = models.CharField(
         max_length=50, choices=DONATION_TYPE_CHOICES)
