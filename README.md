@@ -89,7 +89,7 @@ The following are some key Python packages used in the project:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/your-repo/blood-donation-system.git
+   git clone https://github.com/Dee-njeri/blood-donor-system.git
    cd blood-donation-system
 
    ```
@@ -652,3 +652,8 @@ Create a new branch for your feature/bugfix. Do not make changes to the `main` b
 Make your desired changes and commit them to your branch. Push your branch to your GitHub account.
 4. **Submit a pull request**:
 Submit a pull request to the `main` branch with a detailed explanation of the changes you made.
+
+
+## License
+
+This project is licensed under the MIT License.
